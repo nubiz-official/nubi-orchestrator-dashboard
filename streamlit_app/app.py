@@ -27,14 +27,18 @@ st.set_page_config(
 # ─── CSS (원본과 동일) ───
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
 html, body, [class*="st-"], h1, h2, h3, h4, h5, h6, p, span, div, li, a, button, label {
     font-family: 'Noto Sans KR', sans-serif !important;
+}
+[data-testid="stIconMaterial"], [data-testid="stIconMaterial"] * {
+    font-family: 'Material Symbols Rounded' !important;
 }
 h1, h2, h3 { font-weight: 700 !important; color: #e8eaf2 !important; }
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header[data-testid="stHeader"] { background: transparent !important; }
+section[data-testid="stSidebar"] { background: #060b16; border-right: 1px solid #1e293b; }
 .stDeployButton {display: none;}
 p, span, div { color: #c9cdd5; }
 
