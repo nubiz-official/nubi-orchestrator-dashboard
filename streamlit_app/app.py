@@ -24,6 +24,51 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ─── 네비게이션 바 (13개 표준 서비스 공통 패턴) ───
+st.markdown("""
+<style>
+.nav-home-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    background: rgba(8,13,26,.95); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,.13);
+    padding: 0 24px; height: 44px;
+    display: flex; align-items: center; gap: 0;
+}
+.nav-home-bar a {
+    color: #6b7794; text-decoration: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 12px 16px; transition: color .2s;
+}
+.nav-home-bar a:hover { color: #e8eaf2; }
+.nav-home-bar a.active { color: #00c2a8; }
+.nav-home-bar .nav-logo {
+    color: #00c2a8; font-weight: 500;
+    margin-right: 16px; font-size: 13px; letter-spacing: .12em;
+}
+.nav-home-bar .nav-back {
+    margin-left: auto; color: #00c2a8 !important;
+    border: 1px solid rgba(0,194,168,.4); border-radius: 4px;
+    padding: 6px 14px !important;
+}
+.nav-home-bar .nav-back:hover { background: rgba(0,194,168,.1); }
+.stApp { padding-top: 44px !important; }
+@media(max-width:768px) {
+    .nav-home-bar { display: none !important; }
+    .stApp { padding-top: 0 !important; }
+}
+</style>
+<div class="nav-home-bar">
+    <a class="nav-logo" href="https://teamnubiz.com">NUBIZ</a>
+    <a href="https://teamnubiz.com">홈</a>
+    <a href="https://scout.teamnubiz.com">Scout</a>
+    <a href="https://patent.teamnubiz.com">Patent</a>
+    <a href="https://smartbell.teamnubiz.com">SmartBell</a>
+    <a class="active" href="https://nubi-orchestrator-dashboard-production.up.railway.app">Orchestrator</a>
+    <a class="nav-back" href="https://www.teamnubiz.com/projects">← 프로젝트로 돌아가기</a>
+</div>
+""", unsafe_allow_html=True)
+
 # ─── CSS (원본과 동일) ───
 st.markdown("""
 <style>
