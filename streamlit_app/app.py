@@ -24,51 +24,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ─── 네비게이션 바 (13개 표준 서비스 공통 패턴) ───
-st.markdown("""
-<style>
-.nav-home-bar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-    background: rgba(8,13,26,.95); backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255,255,255,.13);
-    padding: 0 24px; height: 44px;
-    display: flex; align-items: center; gap: 0;
-}
-.nav-home-bar a {
-    color: #6b7794; text-decoration: none;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
-    padding: 12px 16px; transition: color .2s;
-}
-.nav-home-bar a:hover { color: #e8eaf2; }
-.nav-home-bar a.active { color: #00c2a8; }
-.nav-home-bar .nav-logo {
-    color: #00c2a8; font-weight: 500;
-    margin-right: 16px; font-size: 13px; letter-spacing: .12em;
-}
-.nav-home-bar .nav-back {
-    margin-left: auto; color: #00c2a8 !important;
-    border: 1px solid rgba(0,194,168,.4); border-radius: 4px;
-    padding: 6px 14px !important;
-}
-.nav-home-bar .nav-back:hover { background: rgba(0,194,168,.1); }
-.stApp { padding-top: 44px !important; }
-@media(max-width:768px) {
-    .nav-home-bar { display: none !important; }
-    .stApp { padding-top: 0 !important; }
-}
-</style>
-<div class="nav-home-bar">
-    <a class="nav-logo" href="https://teamnubiz.com">NUBIZ</a>
-    <a href="https://teamnubiz.com">홈</a>
-    <a href="https://scout.teamnubiz.com">Scout</a>
-    <a href="https://patent.teamnubiz.com">Patent</a>
-    <a href="https://smartbell.teamnubiz.com">SmartBell</a>
-    <a class="active" href="https://nubi-orchestrator-dashboard-production.up.railway.app">Orchestrator</a>
-    <a class="nav-back" href="https://www.teamnubiz.com/projects">← 프로젝트로 돌아가기</a>
-</div>
-""", unsafe_allow_html=True)
-
 # ─── CSS (원본과 동일) ───
 st.markdown("""
 <style>
@@ -86,6 +41,12 @@ header[data-testid="stHeader"] { background: transparent !important; }
 section[data-testid="stSidebar"] { background: #060b16; border-right: 1px solid #1e293b; }
 .stDeployButton {display: none;}
 p, span, div { color: #c9cdd5; }
+.nav-link {
+    display: block; padding: 5px 12px; margin: 2px 0;
+    color: #9ca3af; text-decoration: none !important;
+    border-radius: 6px; font-size: 0.82rem; transition: all 0.2s ease;
+}
+.nav-link:hover { color: #00c2a8 !important; background: rgba(0,194,168,0.08); padding-left: 16px; }
 
 .orch-hero {
     text-align: center; padding: 24px 20px 16px;
@@ -239,8 +200,17 @@ with st.sidebar:
     if st.button("질문하기", use_container_width=True) and free_q:
         st.session_state["run_cmd"] = free_q
 
-    st.markdown("---")
-    st.markdown(f"<div style='text-align:center;font-size:0.7rem;color:#374151;'>v2.0 | {datetime.now().strftime('%Y-%m-%d')}</div>", unsafe_allow_html=True)
+    st.markdown("""
+    <hr style="border-color:#1e293b;">
+    <a class="nav-link" href="https://www.teamnubiz.com" target="_blank">홈페이지</a>
+    <a class="nav-link" href="https://www.teamnubiz.com/projects" target="_blank">프로젝트</a>
+    <hr style="border-color:#1e293b;">
+    <div style="text-align:center; padding:6px 0;">
+        <a href="https://teamnubiz.com" target="_blank" style="color:#00c2a8; text-decoration:none; font-size:0.8rem;">teamnubiz.com</a><br>
+        <span style="color:#4b5563; font-size:0.7rem;">contact@teamnubiz.com</span>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align:center;font-size:0.7rem;color:#374151;margin-top:8px;'>v2.0 | {datetime.now().strftime('%Y-%m-%d')}</div>", unsafe_allow_html=True)
 
 
 # ─── 메인 ───
