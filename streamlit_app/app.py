@@ -266,24 +266,68 @@ with tab_tech:
 
 # ─── 탭 4: 보고서 ───
 with tab_reports:
-    st.markdown("### 교차 분석 보고서")
+    st.markdown("### 에이전트 실행 보고서")
+
+    # 1. 세션 내 에이전트 실행 이력 (우선 표시)
+    agent_reports = st.session_state.get("agent_reports", [])
+
+    if agent_reports:
+        st.caption(
+            f"현재 세션에서 {len(agent_reports)}개의 에이전트 보고서가 생성되었습니다. "
+            "(브라우저를 닫으면 사라집니다. 영구 보관은 결과 다운로드 → git 커밋)"
+        )
+
+        for idx, rep in enumerate(agent_reports):
+            query_short = rep["query"][:60] + ("..." if len(rep["query"]) > 60 else "")
+            with st.expander(
+                f"📄 [{rep['timestamp']}] {query_short}",
+                expanded=(idx == 0),
+            ):
+                st.markdown(f"**질문**: {rep['query']}")
+                st.markdown("---")
+                st.markdown(rep["output"])
+                st.download_button(
+                    label="이 보고서 다운로드",
+                    data=f"# NuBI Orchestrator 보고서\n\n**생성일시**: {rep['timestamp']}\n\n**질문**: {rep['query']}\n\n---\n\n{rep['output']}",
+                    file_name=f"orchestrator_{rep['file_ts']}.md",
+                    mime="text/markdown",
+                    key=f"dl_{rep['file_ts']}_{idx}",
+                )
+    else:
+        st.info(
+            "ℹ️ 아직 생성된 에이전트 보고서가 없습니다. "
+            "**에이전트** 탭에서 명령을 실행하면 이 탭에 자동으로 누적됩니다."
+        )
+
+    st.markdown("---")
+
+    # 2. 미리 커밋된 교차 분석 보고서 파일
+    st.markdown("### 사전 등록 보고서 (data/reports/)")
     if reports:
         selected_report = st.selectbox("보고서 선택", [r.name for r in reports])
         if selected_report:
             st.markdown(read_md(REPORTS_DIR / selected_report))
     else:
-        st.info("아직 생성된 보고서가 없습니다.")
+        st.caption("사전 등록된 .md 보고서가 없습니다 (data/reports/ 디렉토리 비어있음).")
 
     st.markdown("---")
-    st.markdown("### 의사결정 기록")
+
+    # 3. 의사결정 기록
+    st.markdown("### 의사결정 기록 (data/decisions/)")
     if decisions:
         selected_decision = st.selectbox("기록 선택", [d.name for d in decisions])
         if selected_decision:
             st.markdown(read_md(DECISIONS_DIR / selected_decision))
+    else:
+        st.caption("사전 등록된 의사결정 기록이 없습니다.")
 
 # ─── 탭 5: 에이전트 ───
 with tab_agent:
     st.markdown("### 에이전트 실행")
+
+    # 세션 내 에이전트 실행 이력 초기화
+    if "agent_reports" not in st.session_state:
+        st.session_state["agent_reports"] = []
 
     if "run_cmd" in st.session_state and st.session_state["run_cmd"]:
         cmd = st.session_state.pop("run_cmd")
@@ -293,6 +337,21 @@ with tab_agent:
             output = call_claude_api(cmd)
 
         st.markdown(output)
+
+        # 에러 응답이 아닌 경우에만 보고서 탭에 누적 저장
+        if not output.startswith("ANTHROPIC_API_KEY"):
+            ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            file_ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            st.session_state["agent_reports"].insert(
+                0,
+                {
+                    "timestamp": ts,
+                    "file_ts": file_ts,
+                    "query": cmd,
+                    "output": output,
+                },
+            )
+            st.success(f"✅ 보고서 탭에 저장되었습니다 (총 {len(st.session_state['agent_reports'])}건)")
 
         st.download_button(
             label="결과 다운로드",
@@ -339,7 +398,8 @@ with tab_agent:
 #### 3️⃣ 응답 확인 & 저장
 
 - 응답은 마크다운으로 표시되며, **평균 10~30초** 소요됩니다 (질문 길이 / 복잡도에 따라 변동).
-- 응답 아래의 **결과 다운로드** 버튼으로 `.md` 파일로 저장할 수 있습니다 (파일명에 자동 타임스탬프).
+- **실행된 모든 보고서는 자동으로 [보고서] 탭에 누적 저장됩니다** (현재 브라우저 세션 동안 유지, 닫으면 사라짐).
+- 응답 아래의 **결과 다운로드** 버튼으로 `.md` 파일로 받을 수 있습니다. 영구 보관하려면 이 파일을 `data/reports/`에 git 커밋하세요.
 - 동일 질문을 여러 번 던지면 응답이 조금씩 달라질 수 있습니다 — 에이전트는 결정론적이지 않습니다. 중요한 의사결정 근거로 쓰실 때는 **2~3회 반복 질문** 권장.
 
 ---
